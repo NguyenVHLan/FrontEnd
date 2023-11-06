@@ -36,7 +36,6 @@ export default function HomePage() {
           }
         }
       };
-      
       fetchUser();
     } else {
       alert("You are not logged in");
@@ -64,28 +63,20 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     const token = localStorage.getItem('accessToken');
-    try {
-      // Sử dụng `axios.post` thay vì `try...catch` để bắt lỗi
-      const response = await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
+      axios
+        .post(`${API_BASE_URL}/logout`,{},{
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-
-      if (response.status === 200) {
-        localStorage.removeItem('accessToken');
-        navigate("/");
-      } else {
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Logout error:", error);
-      alert("Logout error: " + error.message);
-    }
+        })
+        .then(() => {
+          alert("Log out success!");
+          localStorage.removeItem("accessToken");
+          window.location.reload();
+        })
+        .catch((error) => { 
+          alert(error);
+        }); 
   };
 
   const handleHome = () => {
@@ -169,10 +160,10 @@ export default function HomePage() {
       </nav>
       <div className="flex justify-center items-center mx-auto my-auto lg:py-0">
       <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-      <p className="text-4xl text-center font-bold mx-auto my-auto text-neutral-800 dark:text-neutral-200">Welcome to the homepage</p>
-      {user && (
+        <p className="text-4xl text-center font-bold mx-auto my-auto text-neutral-800 dark:text-neutral-200">Welcome to the homepage</p>
+        {user && (
           <p className="text-4xl text-center font-bold mx-auto my-auto text-neutral-800 dark:text-neutral-200">Hello! {user}</p>
-      )}
+        )}
       </div>
       </div>
       {user && (

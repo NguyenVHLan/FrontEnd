@@ -66,27 +66,20 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     const token = localStorage.getItem('accessToken');
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
+      axios
+        .post(`${API_BASE_URL}/logout`,{},{
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-
-      if (response.status === 200) {
-        localStorage.removeItem('accessToken');
-        navigate("/");
-      } else {
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Logout error:", error);
-      alert("Logout error: " + error.message);
-    }
+        })
+        .then(() => {
+          alert("Log out success!");
+          localStorage.removeItem("accessToken");
+          window.location.reload();
+        })
+        .catch((error) => { 
+          alert(error);
+        }); 
   };
 
   const deleteUser = async (userId) => {

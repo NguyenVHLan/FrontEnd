@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(false);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -42,6 +43,24 @@ export default function HomePage() {
     }
   }, []);
   
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken){
+      axios.get(`${API_BASE_URL}/item`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((response) => {
+          const dataList = response.data;
+          setData(dataList);
+        })
+        .catch((error) => {
+          // Xử lý lỗi 
+          console.error('Error:', error);
+        });
+    }
+  }, []);
 
   const handleLogout = async () => {
     const token = localStorage.getItem('accessToken');
@@ -58,9 +77,8 @@ export default function HomePage() {
       );
 
       if (response.status === 200) {
-        // Xóa token sau khi đăng xuất thành công
         localStorage.removeItem('accessToken');
-        navigate("/login");
+        navigate("/");
       } else {
         console.error("Logout failed");
       }
@@ -87,6 +105,47 @@ export default function HomePage() {
   const handleRegister = () => {
     navigate("/register");
   };
+
+  const deleteItem = async (itemName) => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/user/${itemName}`,{},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 204) {
+        alert('User deleted successfully.');
+      } else {
+        alert('Failed to delete user.');
+      }
+    } catch (error) {
+      console.error('Error while deleting user:', error);
+      alert('An error occurred while deleting the user.');
+    }
+  };
+
+  const addItem = (e) => {
+    e.preventDefault();
+    const name = e.target.item.value;
+    const price = e.target.price.value;
+    const store_id = "1";
+    const token = localStorage.getItem('accessToken');
+
+    axios
+      .post(`${API_BASE_URL}/item/${name}`, { price, store_id },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {        
+        alert("Item added!");
+      })
+      .catch((error) => {
+       alert(error);
+      });
+  }
 
   return (
       <section className="bg-cover bg-center h-screen bg-[url('https://img.freepik.com/premium-vector/white-background-with-blue-technology-circuit_583398-369.jpg')]">
@@ -116,7 +175,49 @@ export default function HomePage() {
       )}
       </div>
       </div>
-      </section>
-    
+      {user && (
+      <div className="w-2/3 mx-auto">
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <form onSubmit={addItem}>
+        <table className="w-full text-base text-center text-gray-500 dark:text-gray-400 bg-white">
+          <thead className="text-xl text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="px-6 py-1 ">ID</th>
+              <th scope="col" className="px-6 py-1 ">Name</th>
+              <th scope="col" className="px-6 py-1 ">Price</th>
+              <th scope="col" className="px-6 py-1">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.id}>
+                <td className="px-3 py-1">{item.id}</td>
+                <td className="px-3 py-1">{item.name}</td>
+                <td className="px-3 py-1">{item.price}</td>
+                <td className="px-3 py-1">
+                  <button className="hover:bg-red-600 text-black hover:text-white font-semibold px-2 py-1 rounded" onClick={() => deleteItem(item.name)}>Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td className="px-3 py-1">  </td>
+              <td className="px-3 py-1">
+                <input type="text" name="item" className="w-full text-center text-base text-gray-500 dark-text-gray-400" placeholder="Name" />
+              </td>
+              <td className="px-3 py-1">
+                <input type="text" name="price" className="w-full text-center text-base text-gray-500 dark:text-gray-400" placeholder="Price" />
+              </td>
+              <td className="px-3 py-1">
+                <button type="submit" className="hover:bg-green-600 text-black hover:text-white font-semibold px-2 py-1 rounded">Add</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </form>
+        </div>
+      </div>
+      )}
+      </section> 
   );
-}
+};

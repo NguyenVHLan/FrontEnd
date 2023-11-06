@@ -67,7 +67,6 @@ export default function AdminPage() {
   const handleLogout = async () => {
     const token = localStorage.getItem('accessToken');
     try {
-      // Sử dụng `axios.post` thay vì `try...catch` để bắt lỗi
       const response = await axios.post(
         `${API_BASE_URL}/logout`,
         {},
@@ -79,9 +78,8 @@ export default function AdminPage() {
       );
 
       if (response.status === 200) {
-        // Xóa token sau khi đăng xuất thành công
         localStorage.removeItem('accessToken');
-        navigate("/login");
+        navigate("/");
       } else {
         console.error("Logout failed");
       }
@@ -164,6 +162,5 @@ export default function AdminPage() {
         </div>
       </div>
       </section>
-    
   );
-}
+};

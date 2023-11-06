@@ -51,7 +51,8 @@ const QRPage = () => {
             {isLogIn ? (
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <img className="mx-auto max-w-xl" src={`${API_BASE_URL}/qrcode/${user_id}`} alt="SQRC"></img>
-                <button type="submit" onClick={handleCheck} className="flex flex-col items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Check Auth</button>
+                <p className="text-xs font-bold mx-auto mb-2 text-neutral-800 dark:text-neutral-200">Please use the SQRC Authentication App to scan the above qr code and authenticate the user then press the button below</p>
+                <button type="submit" onClick={handleCheck} className="flex flex-col items-center justify-center text-xl text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Check Auth</button>
             </div>
             ) : (
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
